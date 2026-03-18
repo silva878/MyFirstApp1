@@ -29,6 +29,10 @@ android {
             )
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -44,4 +48,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+   // implementation("com.google.android.material:material:1.8.0")
+    //implementation("com.mikepenz:iconics-core:6.1.0")
+    //implementation("com.mikepenz:iconics-views:6.1.0")
+    //implementation("com.mikepenz:fontawesome-typeface:5.15.2")
+    //implementation("com.mikepenz:iconics-core:6.1.0")
+    //implementation("com.mikepenz:iconics-views:6.1.0")
+    //implementation("com.mikepenz:fontawesome-typeface:5.15.2.1")
 }
