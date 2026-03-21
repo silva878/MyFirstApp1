@@ -46,16 +46,17 @@
         android:text="10 апреля в 11:55" />
 
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/menu"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_menu"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:contentDescription="@string/menu_description"
+        app:icon="@drawable/ic_menu"
+        app:iconGravity="textStart"
+        style="@style/Widget.AppTheme.MenuButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/avatar"
-        app:tint="@android:color/darker_gray" />
+        app:layout_constraintTop_toTopOf="@id/avatar" />
+
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"
@@ -119,62 +120,46 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/link_block">
 
-        <ImageButton
+        <!-- Кнопка лайка (Toggle Button) -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/like"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_like_border"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
             android:contentDescription="@string/like_description"
-            android:layout_marginEnd="16dp"
-            app:tint="@color/purple_500" />
+            app:icon="@drawable/ic_like_border"
+            app:iconGravity="textStart"
+            android:text="0"
+            style="@style/Widget.AppTheme.LikeButton" />
 
-        <TextView
-            android:id="@+id/like_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@color/purple_500"
-            android:layout_marginEnd="32dp"
-            android:text="999" />
-
-        <ImageButton
+        <!-- Кнопка репоста -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:contentDescription="@string/share_description"
-            android:layout_marginEnd="16dp"
-            app:tint="@color/purple_500" />
+            app:icon="@drawable/ic_share"
+            app:iconGravity="textStart"
+            android:text="0"
+            style="@style/Widget.AppTheme.ShareButton" />
 
-        <TextView
-            android:id="@+id/share_count"
+        <!-- Кнопка просмотров (не кликабельная, просто для отображения) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/views"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@color/purple_500"
-            android:layout_marginEnd="32dp"
-            android:text="25" />
-
-        <ImageButton
-            android:id="@+id/views_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_visibility"
+            android:layout_marginStart="16dp"
+            android:clickable="false"
+            android:focusable="false"
             android:contentDescription="@string/views_description"
-            android:layout_marginEnd="8dp"
-            app:tint="@android:color/darker_gray" />
+            app:icon="@drawable/ic_visibility"
+            app:iconGravity="textStart"
+            android:text="0"
+            style="@style/Widget.AppTheme.ShareButton" />
 
-        <TextView
-            android:id="@+id/views_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:text="5.7K" />
     </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
