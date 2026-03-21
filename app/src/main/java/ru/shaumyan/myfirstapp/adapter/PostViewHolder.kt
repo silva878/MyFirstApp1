@@ -1,14 +1,22 @@
 package ru.shaumyan.myfirstapp.adapter
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ru.shaumyan.myfirstapp.R
 import ru.shaumyan.myfirstapp.databinding.CardPostBinding
+import ru.shaumyan.myfirstapp.databinding.ItemVideoBinding
 import ru.shaumyan.myfirstapp.dto.Post
 import java.text.DecimalFormat
 
+
 class PostViewHolder(
     private val binding: CardPostBinding,
-    private val onLikeClickListener: (Post) -> Unit,
-    private val onShareClickListener: (Post) -> Unit
+    private val listener: OnPostInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {
@@ -17,43 +25,65 @@ class PostViewHolder(
             published.text = post.published
             content.text = post.content
 
-            // Форматируем счетчики (можно вынести в отдельную функцию)
-            likeCount.text = formatCount(post.likes)
-            shareCount.text = formatCount(post.shares)
-            viewsCount.text = formatCount(post.views)
+            like.isChecked = post.likedByMe
+            like.text = formatCount(post.likes)
+            share.text = formatCount(post.shares)
+            views.text = formatCount(post.views)
 
-            // Устанавливаем иконку лайка
-            if (post.likedByMe) {
-                like.setImageResource(R.drawable.ic_like_filled)
+            // Обработка видео
+            if (post.video.isNullOrBlank()) {
+                // Если видео нет, скрываем контейнер
+                videoContainer.removeAllViews()
+                videoContainer.visibility = View.GONE
             } else {
-                like.setImageResource(R.drawable.ic_like_border)
+                // Если видео есть, показываем контейнер и наполняем его
+                videoContainer.visibility = View.VISIBLE
+                videoContainer.removeAllViews()
+
+                // Инфлейтим layout видео
+                val videoBinding = ItemVideoBinding.inflate(LayoutInflater.from(itemView.context), videoContainer, true)
+
+                // Устанавливаем текст видео (можно показать короткую ссылку)
+                videoBinding.videoUrl.text = post.video
+
+                // Обработка клика на весь блок видео
+                videoContainer.setOnClickListener {
+                    openVideo(post.video!!)
+                }
             }
 
             // Обработчики кликов
-            like.setOnClickListener {
-                onLikeClickListener(post)
-            }
+            like.setOnClickListener { listener.onLike(post) }
+            share.setOnClickListener { listener.onShare(post) }
+            avatar.setOnClickListener { listener.onAvatarClick(post) }
 
-            share.setOnClickListener {
-                onShareClickListener(post)
+            // Кнопка меню
+            menu.setOnClickListener { view ->
+                showPopupMenu(view, post)
             }
+        }
+    }
 
-            // Для исследования (можно оставить или убрать)
-            menu.setOnClickListener {
-                android.widget.Toast.makeText(
-                    itemView.context,
-                    "Меню поста ${post.id}",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
-            }
+    private fun showPopupMenu(anchor: View, post: Post) {
+        PopupMenu(anchor.context, anchor).apply {
+            // Загружаем меню из ресурса
+            inflate(R.menu.post_menu)
 
-            avatar.setOnClickListener {
-                android.widget.Toast.makeText(
-                    itemView.context,
-                    "Профиль автора ${post.author}",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
+            // Обрабатываем выбор пунктов
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.edit -> {
+                        listener.onEdit(post)
+                        true
+                    }
+                    R.id.remove -> {
+                        listener.onRemove(post)
+                        true
+                    }
+                    else -> false
+                }
             }
+            show()
         }
     }
 
@@ -64,7 +94,7 @@ class PostViewHolder(
                 if (millions % 1.0 == 0.0) {
                     "${millions.toInt()}M"
                 } else {
-                    java.text.DecimalFormat(".").format(millions) + "M"
+                    DecimalFormat(".").format(millions) + "M"
                 }
             }
             count >= 10_000 -> "${count / 1000}K"
@@ -73,10 +103,29 @@ class PostViewHolder(
                 if (thousands % 1.0 == 0.0) {
                     "${thousands.toInt()}K"
                 } else {
-                    java.text.DecimalFormat(".").format(thousands) + "K"
+                    DecimalFormat(".").format(thousands) + "K"
                 }
             }
             else -> count.toString()
         }
     }
+    private fun openVideo(videoUrl: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+
+        // Получаем список приложений, которые могут обработать Intent
+        val packageManager = itemView.context.packageManager
+        val activities = packageManager.queryIntentActivities(intent, 0)
+
+        // Логируем результат
+        Log.d("VideoIntent", "queryIntentActivities: $activities")
+
+        val resolveInfo = intent.resolveActivity(packageManager)
+        Log.d("VideoIntent", "resolveActivity: $resolveInfo")
+
+        // Далее запуск как обычно...
+    }
 }
+
+
+
+
